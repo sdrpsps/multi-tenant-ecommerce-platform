@@ -26,7 +26,7 @@ export const Categories: CollectionConfig = {
       hasMany: false,
     },
     {
-      name: "subCategories",
+      name: "subcategories",
       type: "join",
       collection: "categories",
       on: "parent",

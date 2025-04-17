@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "generate": "payload generate:types",
-    "db:refresh": "payload migrate:refresh"
+    "db:fresh": "payload migrate:fresh",
+    "db:seed": "bun run src/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
