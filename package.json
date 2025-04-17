@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3001",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate": "payload generate:types"
+    "generate": "payload generate:types",
+    "db:refresh": "payload migrate:refresh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
