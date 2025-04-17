@@ -4,6 +4,7 @@ import { getPayload } from "payload";
 import Footer from "./footer";
 import { NavBar } from "./navbar";
 import { SearchFilters } from "./search-filters";
+import { CustomCategory } from "./types";
 
 interface HomeLayoutProps {
   children: React.ReactNode;
@@ -23,14 +24,15 @@ const HomeLayout = async ({ children }: HomeLayoutProps) => {
         exists: false,
       },
     },
+    sort: "name",
   });
 
-  const formattedData = categories.docs.map((doc) => ({
+  const formattedData: CustomCategory[] = categories.docs.map((doc) => ({
     ...doc,
-    subCategories: (doc.subCategories?.docs || []).map((subCategory) => ({
+    subcategories: (doc.subcategories?.docs || []).map((subCategory) => ({
       // Because of "depth: 1" we are confident "doc" will be a type of Category
       ...(subCategory as Category),
-      subCategories: undefined,
+      subcategories: undefined,
     })),
   }));
 

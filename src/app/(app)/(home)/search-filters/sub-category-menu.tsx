@@ -1,8 +1,9 @@
 import { Category } from "@/payload-types";
 import Link from "next/link";
+import { CustomCategory } from "../types";
 
 interface SubCategoryMenuProps {
-  category: Category;
+  category: CustomCategory;
   isOpen: boolean;
   position: { top: number; left: number };
 }
@@ -14,8 +15,8 @@ const SubCategoryMenu = ({
 }: SubCategoryMenuProps) => {
   if (
     !isOpen ||
-    !category.subCategories ||
-    category.subCategories.length === 0
+    !category.subcategories ||
+    category.subcategories.length === 0
   ) {
     return null;
   }
@@ -38,10 +39,10 @@ const SubCategoryMenu = ({
         }}
       >
         <div>
-          {category.subCategories?.map((subCategory: Category) => (
+          {category.subcategories?.map((subCategory: Category) => (
             <Link
               key={subCategory.slug}
-              href={`/categories/${subCategory.slug}`}
+              href={`/${category.slug}/${subCategory.slug}`}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium"
             >
               {subCategory.name}
