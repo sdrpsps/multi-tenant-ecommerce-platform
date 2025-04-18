@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
+import Link from "next/link";
 import { useRef, useState } from "react";
-import { CustomCategory } from "../types";
 import SubCategoryMenu from "./sub-category-menu";
 import { useDropdownPosition } from "./use-dropdown-position";
-import Link from "next/link";
 
 interface CategoryDropdownProps {
-  category: CustomCategory;
+  category: CategoriesGetManyOutputSingle;
   isActive?: boolean;
   isNavigationHovered?: boolean;
 }
@@ -35,7 +35,7 @@ const CategoryDropdown = ({
   const dropdownPosition = getDropdownPosition();
 
   const toggleDropdown = () => {
-    if (category.subcategories.docs?.length) {
+    if (category.subcategories.length) {
       setIsOpen(!isOpen);
     }
   };
