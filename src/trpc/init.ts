@@ -4,6 +4,7 @@ import superjson from "superjson";
 
 import { getPayload } from "payload";
 import config from "@payload-config";
+import { appRouter } from "./routers/_app";
 
 export const createTRPCContext = cache(async () => {
   /**
