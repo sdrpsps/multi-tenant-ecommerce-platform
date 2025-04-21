@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { cookies as getCookies, headers as getHeaders } from "next/headers";
 import { AUTH_COOKIE } from "../constants";
 import { loginSchema, registerSchema } from "../schemas";
+import { generateAuthCookies } from "../utils";
 
 export const authRouter = createTRPCRouter({
   session: baseProcedure.query(async ({ ctx }) => {
@@ -49,16 +50,7 @@ export const authRouter = createTRPCRouter({
         });
       }
 
-      const cookies = await getCookies();
-      cookies.set({
-        name: AUTH_COOKIE,
-        value: data.token,
-        httpOnly: true,
-        path: "/",
-        // TODO: CORS
-        // sameSite: "none",
-        // domain: "",
-      });
+      await generateAuthCookies({ value: data.token });
     }),
   login: baseProcedure.input(loginSchema).mutation(async ({ ctx, input }) => {
     const data = await ctx.db.login({
@@ -73,16 +65,7 @@ export const authRouter = createTRPCRouter({
       });
     }
 
-    const cookies = await getCookies();
-    cookies.set({
-      name: AUTH_COOKIE,
-      value: data.token,
-      httpOnly: true,
-      path: "/",
-      // TODO: CORS
-      // sameSite: "none",
-      // domain: "",
-    });
+    await generateAuthCookies({ value: data.token });
 
     return data;
   }),

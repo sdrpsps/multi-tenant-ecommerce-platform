@@ -7,13 +7,13 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,18 +39,21 @@ export const SignInView = () => {
   });
 
   const trpc = useTRPC();
-  const { mutate, isPending } = useMutation(trpc.auth.login.mutationOptions());
-
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    mutate(values, {
-      onSuccess: () => {
-        toast.success("Logged in successfully");
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation(
+    trpc.auth.login.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
         router.push("/");
       },
       onError: (error) => {
         toast.error(error.message);
       },
-    });
+    })
+  );
+
+  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+    mutate(values);
   };
 
   return (
@@ -75,9 +78,7 @@ export const SignInView = () => {
                 </Link>
               </Button>
             </div>
-            <h1 className="text-4xl font-semibold">
-              Welcome back to SunRoad
-            </h1>
+            <h1 className="text-4xl font-semibold">Welcome back to SunRoad</h1>
             <FormField
               name="email"
               render={({ field }) => (
