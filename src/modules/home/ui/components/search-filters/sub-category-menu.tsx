@@ -1,6 +1,7 @@
-import { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
-import { Category } from "@/payload-types";
 import Link from "next/link";
+
+import type { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
+import type { Category } from "@/payload-types";
 
 interface SubCategoryMenuProps {
   category: CategoriesGetManyOutputSingle;

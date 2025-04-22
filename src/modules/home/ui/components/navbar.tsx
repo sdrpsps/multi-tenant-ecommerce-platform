@@ -1,15 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { MenuIcon } from "lucide-react";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { NavbarSidebar } from "./navbar-sidebar";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
+
+import { NavbarSidebar } from "./navbar-sidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -93,13 +96,17 @@ export const NavBar = () => {
             className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
             asChild
           >
-            <Link prefetch href="/sign-in">Login</Link>
+            <Link prefetch href="/sign-in">
+              Login
+            </Link>
           </Button>
           <Button
             className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black text-white hover:bg-pink-400 transition-colors text-lg"
             asChild
           >
-            <Link prefetch href="/sign-up">Start selling</Link>
+            <Link prefetch href="/sign-up">
+              Start selling
+            </Link>
           </Button>
         </div>
       )}

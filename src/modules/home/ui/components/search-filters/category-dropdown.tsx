@@ -1,10 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
 import Link from "next/link";
 import { useRef, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
+
 import SubCategoryMenu from "./sub-category-menu";
 import { useDropdownPosition } from "./use-dropdown-position";
 

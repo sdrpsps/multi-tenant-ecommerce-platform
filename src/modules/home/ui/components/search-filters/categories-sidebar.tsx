@@ -1,5 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -7,15 +12,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  CategoriesGetManyOutput,
-  CategoriesGetManyOutputSingle,
-} from "@/modules/categories/server/types";
+
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+
+import type { CategoriesGetManyOutput, CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
 
 interface CategoriesSidebarProps {
   open: boolean;
@@ -27,27 +27,29 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
   const trpc = useTRPC();
   const { data } = useQuery(trpc.categories.getMany.queryOptions());
 
-  const [parentCategories, setParentCategories] =
-    useState<CategoriesGetManyOutput | null>(null);
-  const [selectedCategory, setSelectedCategory] =
-    useState<CategoriesGetManyOutputSingle | null>(null);
+  const [currentCategories, setCurrentCategories] = useState<CategoriesGetManyOutput | null>(null);
+  const [selectedParent, setSelectedParent] = useState<CategoriesGetManyOutputSingle | null>(null);
 
-  const currentCategories = parentCategories ?? data ?? [];
-  const backgroundColor = selectedCategory?.color || "white";
+  const categoriesToShow = currentCategories ?? data ?? [];
+  const backgroundColor = selectedParent?.color || "white";
 
   const handleOpenChange = (open: boolean) => {
-    setParentCategories(null);
-    setSelectedCategory(null);
+    setCurrentCategories(null);
+    setSelectedParent(null);
     onOpenChange(open);
   };
 
   const handleCategoryClick = (category: CategoriesGetManyOutputSingle) => {
-    if (category.subcategories && category.subcategories.length > 0) {
-      setSelectedCategory(category);
-      setParentCategories(category.subcategories as CategoriesGetManyOutput);
+    if (
+      category.subcategories &&
+      Array.isArray(category.subcategories) &&
+      category.subcategories.length > 0
+    ) {
+      setSelectedParent(category);
+      setCurrentCategories(category.subcategories as unknown as CategoriesGetManyOutput);
     } else {
-      if (parentCategories && selectedCategory) {
-        router.push(`/${selectedCategory.slug}/${category.slug}`);
+      if (currentCategories && selectedParent) {
+        router.push(`/${selectedParent.slug}/${category.slug}`);
       } else {
         if (category.slug === "all") {
           router.push("/");
@@ -55,20 +57,17 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
           router.push(`/${category.slug}`);
         }
       }
-
       handleOpenChange(false);
     }
   };
 
   const handleBackClick = () => {
-    if (parentCategories) {
-      setParentCategories(null);
-      setSelectedCategory(null);
-    }
+    setCurrentCategories(null);
+    setSelectedParent(null);
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         side="left"
         className="gap-0 transition-none"
@@ -78,7 +77,7 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
           <SheetTitle>Categories</SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex flex-col overflow-y-auto h-full pb-2">
-          {parentCategories && (
+          {currentCategories && (
             <button
               onClick={handleBackClick}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex items-center text-base font-medium cursor-pointer"
@@ -87,14 +86,14 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
               Back
             </button>
           )}
-          {currentCategories.map((category) => (
+          {categoriesToShow.map((category) => (
             <button
               key={category.id}
               onClick={() => handleCategoryClick(category)}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center text-base font-medium cursor-pointer"
             >
               {category.name}
-              {category.subcategories && category.subcategories.length > 0 && (
+              {category.subcategories && Array.isArray(category.subcategories) && category.subcategories.length > 0 && (
                 <ChevronRightIcon className="size-4" />
               )}
             </button>
@@ -104,4 +103,5 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
     </Sheet>
   );
 };
+
 export default CategoriesSidebar;

@@ -1,4 +1,5 @@
 import { cookies as getCookies } from "next/headers";
+
 import { AUTH_COOKIE } from "./constants";
 
 interface GenerateAuthCookiesProps {

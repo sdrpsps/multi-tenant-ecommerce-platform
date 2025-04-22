@@ -1,0 +1,1 @@
+export const DEFAULT_CATEGORY_COLOR = "#F5F5F5";

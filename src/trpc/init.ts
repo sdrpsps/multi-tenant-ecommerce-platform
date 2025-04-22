@@ -1,10 +1,9 @@
-import { initTRPC } from "@trpc/server";
+import { getPayload } from "payload";
 import { cache } from "react";
 import superjson from "superjson";
 
-import { getPayload } from "payload";
 import config from "@payload-config";
-import { appRouter } from "./routers/_app";
+import { initTRPC } from "@trpc/server";
 
 export const createTRPCContext = cache(async () => {
   /**

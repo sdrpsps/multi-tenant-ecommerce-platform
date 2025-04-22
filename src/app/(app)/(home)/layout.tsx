@@ -1,8 +1,12 @@
 import { getQueryClient, HydrateClient, trpc } from "@/trpc/server";
 import { Suspense } from "react";
-import Footer from "./footer";
-import { NavBar } from "./navbar";
-import { SearchFilters, SearchFiltersSkeleton } from "./search-filters";
+
+import { Footer } from "@/modules/home/ui/components/footer";
+import { NavBar } from "@/modules/home/ui/components/navbar";
+import {
+  SearchFilters,
+  SearchFiltersSkeleton,
+} from "@/modules/home/ui/components/search-filters";
 
 interface HomeLayoutProps {
   children: React.ReactNode;
