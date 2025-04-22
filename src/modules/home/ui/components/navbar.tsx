@@ -65,7 +65,7 @@ export const NavBar = () => {
       <NavbarSidebar
         items={navbarItems}
         open={isSidebarOpen}
-        onOpenChange={setIsSidebarOpen}
+        onOpenChangeAction={setIsSidebarOpen}
       />
 
       <div className="items-center gap-4 hidden lg:flex">
