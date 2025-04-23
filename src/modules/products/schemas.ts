@@ -11,4 +11,5 @@ export const getProductsSchema = z.object({
   maxPrice: z.string().nullable().optional(),
   tags: z.array(z.string()).nullable().optional(),
   sort: z.enum(sortValues).nullable().optional(),
+  tenantSlug: z.string().nullable().optional(),
 });
