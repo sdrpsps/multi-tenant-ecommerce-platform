@@ -15,7 +15,10 @@ import {
 
 import { useTRPC } from "@/trpc/client";
 
-import type { CategoriesGetManyOutput, CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
+import type {
+  CategoriesGetManyOutput,
+  CategoriesGetManyOutputSingle,
+} from "@/modules/categories/server/types";
 
 interface CategoriesSidebarProps {
   open: boolean;
@@ -27,8 +30,10 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
   const trpc = useTRPC();
   const { data } = useQuery(trpc.categories.getMany.queryOptions());
 
-  const [currentCategories, setCurrentCategories] = useState<CategoriesGetManyOutput | null>(null);
-  const [selectedParent, setSelectedParent] = useState<CategoriesGetManyOutputSingle | null>(null);
+  const [currentCategories, setCurrentCategories] =
+    useState<CategoriesGetManyOutput | null>(null);
+  const [selectedParent, setSelectedParent] =
+    useState<CategoriesGetManyOutputSingle | null>(null);
 
   const categoriesToShow = currentCategories ?? data ?? [];
   const backgroundColor = selectedParent?.color || "white";
@@ -46,7 +51,7 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
       category.subcategories.length > 0
     ) {
       setSelectedParent(category);
-      setCurrentCategories(category.subcategories as unknown as CategoriesGetManyOutput);
+      setCurrentCategories(category.subcategories as CategoriesGetManyOutput);
     } else {
       if (currentCategories && selectedParent) {
         router.push(`/${selectedParent.slug}/${category.slug}`);
@@ -93,9 +98,11 @@ const CategoriesSidebar = ({ open, onOpenChange }: CategoriesSidebarProps) => {
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center text-base font-medium cursor-pointer"
             >
               {category.name}
-              {category.subcategories && Array.isArray(category.subcategories) && category.subcategories.length > 0 && (
-                <ChevronRightIcon className="size-4" />
-              )}
+              {category.subcategories &&
+                Array.isArray(category.subcategories) &&
+                category.subcategories.length > 0 && (
+                  <ChevronRightIcon className="size-4" />
+                )}
             </button>
           ))}
         </ScrollArea>
