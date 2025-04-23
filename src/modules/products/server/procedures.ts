@@ -1,5 +1,5 @@
 import { Sort, Where } from "payload";
-import { Category } from "@/payload-types";
+import { Category, Media } from "@/payload-types";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 
@@ -87,8 +87,16 @@ export const productsRouter = createTRPCRouter({
         depth: 1,
         where,
         sort,
+        page: input.cursor,
+        limit: input.limit,
       });
 
-      return data;
+      return {
+        ...data,
+        docs: data.docs.map((doc) => ({
+          ...doc,
+          image: doc.image as Media | null,
+        })),
+      };
     }),
 });
