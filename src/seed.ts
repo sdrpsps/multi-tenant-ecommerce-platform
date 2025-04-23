@@ -142,6 +142,28 @@ const seed = async () => {
     config: configPromise,
   });
 
+  // create super admin tenant
+  const adminTenant = await payload.create({
+    collection: "tenants",
+    data: {
+      name: "admin",
+      slug: "admin",
+      stripeAccountId: "admin",
+    },
+  });
+
+  // create super admin user
+  await payload.create({
+    collection: "users",
+    data: {
+      username: "admin",
+      email: "admin@demo.com",
+      password: "admin",
+      roles: ["super-admin"],
+      tenants: [{ tenant: adminTenant.id }],
+    },
+  });
+
   for (const category of categories) {
     const parentCategory = await payload.create({
       collection: "categories",
@@ -167,10 +189,11 @@ const seed = async () => {
 };
 
 try {
+  console.log("☘️ Seeding...");
   await seed();
-  console.log("Seed completed");
+  console.log("✅ Seed completed");
   process.exit(0);
 } catch (error) {
-  console.error("Seed failed", error);
+  console.error("❌ Seed failed", error);
   process.exit(1);
 }

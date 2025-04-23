@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import type { CategoriesGetManyOutputSingle } from "@/modules/categories/server/types";
 
 import SubCategoryMenu from "./sub-category-menu";
-import { useDropdownPosition } from "./use-dropdown-position";
 
 interface CategoryDropdownProps {
   category: CategoriesGetManyOutputSingle;
@@ -24,8 +23,6 @@ const CategoryDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { getDropdownPosition } = useDropdownPosition(dropdownRef);
-
   const onMouseEnter = () => {
     if (category.subcategories) {
       setIsOpen(true);
@@ -33,8 +30,6 @@ const CategoryDropdown = ({
   };
 
   const onMouseLeave = () => setIsOpen(false);
-
-  const dropdownPosition = getDropdownPosition();
 
   const toggleDropdown = () => {
     if (category.subcategories.length) {
@@ -73,11 +68,7 @@ const CategoryDropdown = ({
           ></div>
         )}
       </div>
-      <SubCategoryMenu
-        category={category}
-        isOpen={isOpen}
-        position={dropdownPosition}
-      />
+      <SubCategoryMenu category={category} isOpen={isOpen} />
     </div>
   );
 };

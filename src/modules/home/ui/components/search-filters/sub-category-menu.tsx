@@ -6,14 +6,9 @@ import type { Category } from "@/payload-types";
 interface SubCategoryMenuProps {
   category: CategoriesGetManyOutputSingle;
   isOpen: boolean;
-  position: { top: number; left: number };
 }
 
-const SubCategoryMenu = ({
-  category,
-  isOpen,
-  position,
-}: SubCategoryMenuProps) => {
+const SubCategoryMenu = ({ category, isOpen }: SubCategoryMenuProps) => {
   if (
     !isOpen ||
     !category.subcategories ||
@@ -25,13 +20,7 @@ const SubCategoryMenu = ({
   const backgroundColor = category.color || "#f5f5f5 ";
 
   return (
-    <div
-      className="fixed z-100"
-      style={{
-        top: position.top,
-        left: position.left,
-      }}
-    >
+    <div className="absolute left-0 top-full z-100">
       <div className="h-3 w-60" />
       <div
         className="w-60 text-black rounded-md overflow-hidden border shadow-[4px_4px_0_0_rgba(0,0,0,1)] -translate-x-[2px] -translate-y-[2px]"
