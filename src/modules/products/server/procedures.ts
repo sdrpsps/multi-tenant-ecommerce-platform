@@ -3,9 +3,23 @@ import { Category, Media, Tenant } from "@/payload-types";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 
-import { getProductsSchema } from "../schemas";
+import { getProductSchema, getProductsSchema } from "../schemas";
 
 export const productsRouter = createTRPCRouter({
+  getOne: baseProcedure
+    .input(getProductSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.db.findByID({
+        collection: "products",
+        id: input.id,
+      });
+
+      return {
+        ...data,
+        image: data.image as Media | null,
+        tenant: data.tenant as Tenant & { image: Media | null },
+      };
+    }),
   getMany: baseProcedure
     .input(getProductsSchema)
     .query(async ({ ctx, input }) => {

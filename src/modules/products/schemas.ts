@@ -3,6 +3,10 @@ import { z } from "zod";
 import { sortValues } from "./search-params";
 import { DEFAULT_LIMIT } from "../tags/constant";
 
+export const getProductSchema = z.object({
+  id: z.string(),
+});
+
 export const getProductsSchema = z.object({
   cursor: z.number().default(1),
   limit: z.number().default(DEFAULT_LIMIT),
