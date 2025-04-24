@@ -4,7 +4,7 @@ import { ShoppingCartIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn, generateTenantUrl } from "@/lib/utils";
 
-import { useCart } from "../hooks/use-cart";
+import { useCart } from "../../hooks/use-cart";
 
 interface CheckoutButtonProps {
   className?: string;

@@ -12,7 +12,7 @@ import { useTRPC } from "@/trpc/client";
 
 const CheckoutButton = dynamic(
   () =>
-    import("@/modules/checkout/components/checkout-button").then(
+    import("@/modules/checkout/ui/components/checkout-button").then(
       (mod) => mod.CheckoutButton
     ),
   {
