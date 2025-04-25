@@ -1,6 +1,20 @@
-import { inferRouterOutputs } from "@trpc/server";
+import type { Stripe } from "stripe";
 
-import type { AppRouter } from "@/trpc/routers/_app";
+export type ProductMetadata = {
+  stripeAccountId: string;
+  id: string;
+  name: string;
+  price: number;
+};
 
-export type ProductsGetManyOutput =
-  inferRouterOutputs<AppRouter>["products"]["getMany"];
+export type CheckoutMetadata = {
+  userId: string;
+};
+
+export type ExpandedLineItem = Stripe.LineItem & {
+  price: Stripe.Price & {
+    product: Stripe.Product & {
+      metadata: ProductMetadata;
+    };
+  };
+};
