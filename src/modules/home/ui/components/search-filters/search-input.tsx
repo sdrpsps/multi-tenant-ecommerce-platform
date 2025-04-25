@@ -41,7 +41,7 @@ const SearchInput = ({ disabled }: SearchInputProps) => {
       </Button>
       {session?.user && (
         <Button variant="elevated" asChild>
-          <Link href="/library">
+          <Link prefetch href="/library">
             <BookmarkCheckIcon className="size-4" />
             Library
           </Link>

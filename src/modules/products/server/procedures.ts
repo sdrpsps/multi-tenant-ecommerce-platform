@@ -1,5 +1,6 @@
 import { Sort, Where } from "payload";
 import { Category, Media, Tenant } from "@/payload-types";
+import { headers as getHeaders } from "next/headers";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 
@@ -9,13 +10,35 @@ export const productsRouter = createTRPCRouter({
   getOne: baseProcedure
     .input(getProductSchema)
     .query(async ({ ctx, input }) => {
+      const headers = await getHeaders();
+      const session = await ctx.db.auth({ headers });
+
       const data = await ctx.db.findByID({
         collection: "products",
         id: input.id,
       });
 
+      let isPurchased = false;
+
+      if (session.user) {
+        const order = await ctx.db.find({
+          collection: "orders",
+          pagination: false,
+          limit: 1,
+          where: {
+            and: [
+              { product: { equals: input.id } },
+              { user: { equals: session.user.id } },
+            ],
+          },
+        });
+
+        isPurchased = !!order.docs[0];
+      }
+
       return {
         ...data,
+        isPurchased,
         image: data.image as Media | null,
         tenant: data.tenant as Tenant & { image: Media | null },
       };
