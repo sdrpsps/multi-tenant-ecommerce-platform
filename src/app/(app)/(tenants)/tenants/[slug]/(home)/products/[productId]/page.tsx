@@ -13,8 +13,8 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
-    trpc.tenants.getOne.queryOptions({
-      slug,
+    trpc.products.getOne.queryOptions({
+      id: productId,
     })
   );
 
