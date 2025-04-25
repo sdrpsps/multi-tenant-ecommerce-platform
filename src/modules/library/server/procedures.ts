@@ -1,10 +1,49 @@
 import { Media, Tenant } from "@/payload-types";
 
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
-import { getLibrarySchema } from "../schemas";
+import { getLibraryOneSchema, getLibrarySchema } from "../schemas";
 
 export const libraryRouter = createTRPCRouter({
+  getOne: protectedProcedure
+    .input(getLibraryOneSchema)
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.db.find({
+        collection: "orders",
+        limit: 1,
+        pagination: false,
+        where: {
+          and: [
+            { product: { equals: input.productId } },
+            { user: { equals: ctx.session.user.id } },
+          ],
+        },
+      });
+
+      const order = data.docs[0];
+
+      if (!order) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Order not found",
+        });
+      }
+
+      const product = await ctx.db.findByID({
+        collection: "products",
+        id: input.productId,
+      });
+
+      if (!product) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+      }
+
+      return product;
+    }),
   getMany: protectedProcedure
     .input(getLibrarySchema)
     .query(async ({ ctx, input }) => {
