@@ -154,13 +154,12 @@ export const checkoutRouter = createTRPCRouter({
           },
         }));
 
-      const totalAmount = products.docs.reduce(
-        (acc, item) => acc + item.price,
+      const totalAmountCents = products.docs.reduce(
+        (acc, item) => acc + item.price * 100,
         0
       );
-
       const platformFeeAmount = Math.round(
-        totalAmount * (PLATFORM_FEE_PERCENTAGE / 100)
+        totalAmountCents * (PLATFORM_FEE_PERCENTAGE / 100)
       );
 
       const checkout = await stripe.checkout.sessions.create(
