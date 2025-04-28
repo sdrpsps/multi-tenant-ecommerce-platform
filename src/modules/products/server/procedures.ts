@@ -1,5 +1,5 @@
 import { Sort, Where } from "payload";
-import { Category, Media, Tenant } from "@/payload-types";
+import { Category, Media, Product, Review, Tenant } from "@/payload-types";
 import { headers as getHeaders } from "next/headers";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
@@ -19,6 +19,49 @@ export const productsRouter = createTRPCRouter({
       });
 
       let isPurchased = false;
+
+      const reviews = await ctx.db.find({
+        collection: "reviews",
+        where: {
+          product: {
+            equals: input.id,
+          },
+        },
+        pagination: false,
+      });
+
+      const reviewRating =
+        reviews.docs.length === 0
+          ? 0
+          : reviews.docs.reduce(
+              (acc, review) => acc + (review.rating ?? 0),
+              0
+            ) / reviews.totalDocs;
+
+      const ratingDistribution: Record<number, number> = {
+        5: 0,
+        4: 0,
+        3: 0,
+        2: 0,
+        1: 0,
+      };
+
+      if (reviews.totalDocs > 0) {
+        reviews.docs.forEach((review) => {
+          const rating = review.rating;
+
+          if (rating >= 1 && rating <= 5) {
+            ratingDistribution[rating]++;
+          }
+        });
+
+        Object.keys(ratingDistribution).forEach((key) => {
+          const rating = Number(key);
+          const count = ratingDistribution[rating] || 0;
+          ratingDistribution[rating] =
+            Math.round(count / reviews.totalDocs) * 100;
+        });
+      }
 
       if (session.user) {
         const order = await ctx.db.find({
@@ -41,6 +84,9 @@ export const productsRouter = createTRPCRouter({
         isPurchased,
         image: data.image as Media | null,
         tenant: data.tenant as Tenant & { image: Media | null },
+        reviewRating,
+        reviewCount: reviews.totalDocs,
+        ratingDistribution,
       };
     }),
   getMany: baseProcedure
@@ -134,9 +180,52 @@ export const productsRouter = createTRPCRouter({
         limit: input.limit,
       });
 
+      // Get all product IDs
+      const productIds = data.docs.map((doc) => doc.id);
+
+      // Fetch all reviews for all products in a single query
+      const allReviewsData = await ctx.db.find({
+        collection: "reviews",
+        where: {
+          product: {
+            in: productIds,
+          },
+        },
+        pagination: false,
+      });
+
+      // Group reviews by product ID
+      const reviewsByProduct = allReviewsData.docs.reduce(
+        (acc, review) => {
+          const { id: productId } = review.product as Product;
+          if (!acc[productId]) {
+            acc[productId] = [];
+          }
+          acc[productId].push(review);
+          return acc;
+        },
+        {} as Record<string, Review[]>
+      );
+
+      // Map products with their reviews
+      const dataWithSummarizedReviews = data.docs.map((doc) => {
+        const productReviews = reviewsByProduct[doc.id] || [];
+        return {
+          ...doc,
+          reviewCount: productReviews.length,
+          reviewRating:
+            productReviews.length === 0
+              ? 0
+              : productReviews.reduce(
+                  (acc, review) => acc + (review.rating ?? 0),
+                  0
+                ) / productReviews.length,
+        };
+      });
+
       return {
         ...data,
-        docs: data.docs.map((doc) => ({
+        docs: dataWithSummarizedReviews.map((doc) => ({
           ...doc,
           image: doc.image as Media | null,
           tenant: doc.tenant as Tenant & { image: Media | null },

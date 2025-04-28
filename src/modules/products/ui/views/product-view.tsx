@@ -1,7 +1,5 @@
 "use client";
 
-// TODO: add real ratings
-
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { LinkIcon, Loader2, StarIcon } from "lucide-react";
 import Image from "next/image";
@@ -15,6 +13,7 @@ import { Progress } from "@/components/ui/progress";
 
 import { formatCurrency, generateTenantUrl } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
+import { toast } from "sonner";
 
 const CartButton = dynamic(
   () => import("../components/cart-button").then((mod) => mod.CartButton),
@@ -85,16 +84,27 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
               </div>
 
               <div className="hidden lg:flex px-6 py-4 items-center justify-center">
-                <div className="flex items-center gap-1">
-                  <StarRating rating={3} iconClassName="size-4" />
+                <div className="flex items-center gap-2">
+                  <StarRating
+                    rating={product.reviewRating}
+                    iconClassName="size-4"
+                  />
+                  <p className="text-base font-medium">
+                    {product.reviewCount} ratings
+                  </p>
                 </div>
               </div>
             </div>
 
             <div className="block lg:hidden px-6 py-4 items-center justify-center border-b">
               <div className="flex items-center gap-1">
-                <StarRating rating={3} iconClassName="size-4" />
-                <p className="text-base font-medium">5 ratings</p>
+                <StarRating
+                  rating={product.reviewRating}
+                  iconClassName="size-4"
+                />
+                <p className="text-base font-medium">
+                  {product.reviewCount} ratings
+                </p>
               </div>
             </div>
 
@@ -122,7 +132,10 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                     variant="elevated"
                     className="size-12"
                     disabled={false}
-                    onClick={() => {}}
+                    onClick={() => {
+                      navigator.clipboard.writeText(location.href);
+                      toast.success("Link copied to clipboard");
+                    }}
                   >
                     <LinkIcon />
                   </Button>
@@ -140,8 +153,8 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                   <h3 className="text-xl font-medium">Ratings</h3>
                   <div className="flex items-center gap-x-1">
                     <StarIcon className="size-4 fill-black" />
-                    <p>(5)</p>
-                    <p className="text-base">5 ratings</p>
+                    <p>({product.reviewRating})</p>
+                    <p className="text-base">{product.reviewCount} ratings</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-[auto_1fr_auto] gap-3 mt-4">
@@ -150,8 +163,13 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
                       <div className="font-medium">
                         {stars} {stars === 1 ? "star" : "stars"}
                       </div>
-                      <Progress value={0} className="h-[1lh]" />
-                      <div className="font-medium">{0}%</div>
+                      <Progress
+                        value={product.ratingDistribution[stars]}
+                        className="h-[1lh]"
+                      />
+                      <div className="font-medium">
+                        {product.ratingDistribution[stars]}%
+                      </div>
                     </Fragment>
                   ))}
                 </div>
