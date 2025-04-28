@@ -2,8 +2,6 @@ import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-// TODO: add real ratings
-
 interface ProductCardProps {
   id: string;
   name: string;
@@ -12,7 +10,6 @@ interface ProductCardProps {
   tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
-  price: number;
 }
 
 export const ProductCard = ({

@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 
 import { formatCurrency, generateTenantUrl } from "@/lib/utils";
 
-// TODO: add real ratings
-
 interface ProductCardProps {
   id: string;
   name: string;
