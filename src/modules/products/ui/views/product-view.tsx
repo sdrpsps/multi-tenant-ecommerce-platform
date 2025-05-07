@@ -1,10 +1,11 @@
 "use client";
 
+import { RichText } from "@payloadcms/richtext-lexical/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { LinkIcon, Loader2, StarIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { Fragment } from "react";
 
 import { StarRating } from "@/components/star-rating";
@@ -110,7 +111,7 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
 
             <div className="p-6">
               {product.description ? (
-                <p>{product.description}</p>
+                <RichText data={product.description} />
               ) : (
                 <p className="font-medium text-muted-foreground italic">
                   No description available
@@ -177,6 +178,16 @@ export const ProductView = ({ productId, tenantSlug }: ProductViewProps) => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const ProductViewSkeleton = () => {
+  return (
+    <div className="px-4 lg:px-12 py-10">
+      <div className="border rounded-sm bg-white overflow-hidden">
+        <div className="w-full h-36 aspect-3/4 bg-neutral-200 animate-pulse" />
       </div>
     </div>
   );
