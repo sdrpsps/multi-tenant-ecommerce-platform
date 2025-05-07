@@ -2,7 +2,7 @@
 
 import { TriangleAlertIcon } from "lucide-react";
 
-const Product = () => {
+const ProductError = () => {
   return (
     <div className="px-4 lg:px-12 py-10">
       <div className="border border-black flex flex-col items-center justify-center p-8 gap-y-4 bg-white w-full rounded-lg">
@@ -13,4 +13,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default ProductError;
