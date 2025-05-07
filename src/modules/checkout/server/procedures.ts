@@ -65,9 +65,10 @@ export const checkoutRouter = createTRPCRouter({
       const data = await ctx.db.find({
         collection: "products",
         where: {
-          id: {
-            in: input.ids,
-          },
+          and: [
+            { id: { in: input.ids } },
+            { isArchived: { not_equals: true } },
+          ],
         },
       });
 
@@ -100,11 +101,12 @@ export const checkoutRouter = createTRPCRouter({
           and: [
             { id: { in: input.productIds } },
             { "tenant.slug": { equals: input.tenantSlug } },
+            { isArchived: { not_equals: true } },
           ],
         },
       });
 
-      if (products.totalDocs !== products.docs.length) {
+      if (products.totalDocs !== input.productIds.length) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Products not found",

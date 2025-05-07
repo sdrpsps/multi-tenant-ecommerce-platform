@@ -1,8 +1,9 @@
-import { Sort, Where } from "payload";
 import { Category, Media, Product, Review, Tenant } from "@/payload-types";
 import { headers as getHeaders } from "next/headers";
+import { Sort, Where } from "payload";
 
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
 
 import { getProductSchema, getProductsSchema } from "../schemas";
 
@@ -20,6 +21,13 @@ export const productsRouter = createTRPCRouter({
           content: false,
         },
       });
+
+      if (data.isArchived) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+      }
 
       let isPurchased = false;
 
@@ -95,7 +103,11 @@ export const productsRouter = createTRPCRouter({
   getMany: baseProcedure
     .input(getProductsSchema)
     .query(async ({ ctx, input }) => {
-      const where: Where = {};
+      const where: Where = {
+        isArchived: {
+          not_equals: true,
+        },
+      };
       let sort: Sort = "-createdAt";
 
       if (input.sort === "curated") {
@@ -165,6 +177,12 @@ export const productsRouter = createTRPCRouter({
       if (input.tenantSlug) {
         where["tenant.slug"] = {
           equals: input.tenantSlug,
+        };
+      } else {
+        // If we are loading products for public storefront, we need to exclude private products
+        // Make sure do not set to "isPrivate: true"
+        where["isPrivate"] = {
+          not_equals: true,
         };
       }
 
