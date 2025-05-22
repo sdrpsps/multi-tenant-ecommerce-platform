@@ -7,9 +7,12 @@ export function cn(...inputs: ClassValue[]) {
 
 export function generateTenantUrl(slug: string) {
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const domain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
+  
+  if (!!process.env.NEXT_PUBLIC_ENABLE_SUBDOMAIN) {
+    return `${protocol}://${slug}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  }
 
-  return `${protocol}://${slug}.${domain}`;
+  return `${protocol}://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/tenants/${slug}`;
 }
 
 export function formatCurrency(price: number) {
