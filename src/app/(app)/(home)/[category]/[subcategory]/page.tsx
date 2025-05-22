@@ -11,6 +11,8 @@ interface SubcategoryPageProps {
   searchParams: Promise<SearchParams>;
 }
 
+export const dynamic = "force-dynamic";
+
 const SubcategoryPage = async ({
   params,
   searchParams,
