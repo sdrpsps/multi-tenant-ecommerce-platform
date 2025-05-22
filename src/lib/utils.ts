@@ -6,7 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function generateTenantUrl(slug: string) {
-  return `/tenants/${slug}`;
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const domain = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
+
+  return `${protocol}://${slug}.${domain}`;
 }
 
 export function formatCurrency(price: number) {
